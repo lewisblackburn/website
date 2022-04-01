@@ -1,0 +1,40 @@
+---
+title: "Optimistic UI: Why you should lie"
+summary: "You should never lie to a user, except the times when you should."
+publishedAt: "2022-03-10"
+cover: heart.jpg
+tags: ["design", "test"]
+---
+
+The less the user knows, the better the experience. This is preverlant in loading spinners. Although they are useful in situations like infinite scroll, they feel hard to implement in things similar to "like" buttons where changing the icon to a spinner is really distracting to the user.
+
+### Reality
+
+<Playground>
+  <LoadingResponse />
+</Playground>
+
+### Lying
+
+<Playground>
+  <InstantResponse />
+</Playground>
+
+I don't know about you, but when I see a spinner, I sit staring at it for a minute. Just waiting for it to finish. There's just something about reinsuring that the action has actually completed. So, why not just let the user assume that the action was successful? I think this is a reasonable enough lie. I'll ask you this, how often have you liked something on a platform like Twitter and the request was unsuccessful? I've never liked anything on Twitter, but if I did, I'm sure I'd never experience it.
+
+### What about errors?
+
+I know what you're thinking, "What do I do if there actually is an error?".
+
+1. If the request is successful, the user will never see an error.
+2. If the request is unsuccessful, catch the error.
+3. Undo any styling changes to the UI.
+4. Notify the user of the error through a toast.
+
+There are some downsides to this approach in that it's not always clear to the user what went wrong. For example, if the request is eventually unsuccessful, after a few good seconds of loading, the user may have scrolled far enough away to forget what post failed to like.
+
+This could be solved by having a link to the post that failed to like through the notification toast, however, this isn't very intuitive to the user and may cause frustration.
+
+### Conclusion
+
+This optimistic UI pattern can apply to many sitations where the user doesn't really need to know what's going on in the background. There are only two responses to a request: success or failure. Let's hope the user will never see a spinner, and never see an error. It's not a perfect solution, but it's a good one.

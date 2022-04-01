@@ -1,0 +1,93 @@
+---
+title: dotfiles
+description: These are my dotfiles
+publishedAt: 2022
+cover: dotfiles.png
+position: 3
+---
+
+I used to have a lot of dotfiles, but I've since stopped updating the [GitHub](https://github.com/lewisblackburn/dotfiles) repository. I feel I do so little customisation that I don't need to keep them in a repo. That being said, here's how to setup a 'zxffo' Macbook Pro.
+
+### MacOS Defaults
+
+I couldn't find a [defaults](https://www.macos-defaults.com) script to setup repeating keys, so you'll have to do that manulally 🙄
+
+#### Icon Size
+
+```bash {1}
+defaults write com.apple.dock "tilesize" -int "36" && killall Dock
+```
+
+#### Hide Dock
+
+```bash {1}
+defaults write com.apple.dock "autohide" -bool "true" && killall Dock
+```
+
+### Installing NeoVim
+
+1. Install NeoVim pre-release: [here](https://github.com/neovim/neovim/wiki/Installing-Neovim#macos--os-x)
+2. Then `mv ./nvim-osx64/bin/nvim /usr/local/bin/`
+
+### Installing NVChad
+
+This needs to be updated along with my dotfiles, but I use NVChad as neovim client now.
+
+### Installing HomeBrew
+
+Homebrew installs the stuff you need that Apple (or your Linux system) didn’t. It installs packages to their own directory and then symlinks their files into /usr/local (on macOS Intel). Homebrew won’t install files outside its prefix and you can place a Homebrew installation wherever you like. You can even trivially create your own Homebrew packages.
+
+```bash {1}
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### Let's talk about Nerd Fonts
+
+Nerd Fonts patches developer targeted fonts with a high number of glyphs (icons). Specifically to add a high number of extra glyphs from popular ‘iconic fonts’ such as Font Awesome, Devicons, Octicons, and others.
+
+```bash {1}
+brew tap homebrew/cask-fonts && brew install --cask font-sauce-code-pro-nerd-font
+```
+
+### The Tools I Use
+
+<Playground>
+  <ToolsDemo />
+</Playground>
+
+```bash {1}
+brew install node yarn go ripgrep ghq peco commitizen
+```
+
+#### Fisher
+
+- `fisher install jethrokuan/z`
+
+### The Applications I Use
+
+<Playground>
+  <ApplicationsDemo />
+</Playground>
+
+```bash {1}
+brew install --cask discord firefox raycast spotify alactritty tableplus postman
+```
+
+### Firefox Extensions
+
+Here is a list of the Firefox extensions I use.
+
+- [Vimium](https://addons.mozilla.org/en-GB/firefox/addon/vimium-ff)
+- [React Developer Tools](https://addons.mozilla.org/en-US/firefox/addon/react-devtools)
+- [Apollo Client Developer Tools](https://addons.mozilla.org/en-GB/firefox/addon/apollo-developer-tools)
+- [Bitwarden](https://addons.mozilla.org/en-US/firefox/addon/bitwarden-password-manager)
+- [Privacy Badger](https://addons.mozilla.org/en-US/firefox/addon/privacy-badger17)
+- [Clear cache](https://addons.mozilla.org/en-US/firefox/addon/clearcache)
+- [Ublock Origin](https://addons.mozilla.org/en-US/firefox/addon/ublock-origin)
+
+### Todo
+
+- Fish config
+  - peco
+  - key bindings
+- Raycast config

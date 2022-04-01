@@ -1,0 +1,129 @@
+---
+title: "A ZOD Guide"
+summary: "TypeScript-first schema validation with static type inference."
+publishedAt: "2022-03-14"
+cover: zod.png
+tags:
+  - react
+---
+
+During development it is often necessary to validate some data, whether it be from a JSON API response or a form submission. This is where zod comes in. For example, what if we want to:
+
+1. Validate some data without a mountain of different if, instanceof and typeof statements.
+
+2. Have TypeScript infer types automatically.
+
+Using zod results in much more readable code and less redundant typings as we don't have to maintain both types, and code for validation at the same time.
+
+## Installing
+
+Before we start, let's install the library:
+
+```bash {1-5}
+$ yarn add zod
+
+# or via npm
+
+$ npm install zod
+```
+
+## Getting Started
+
+Let's start with a small practical example.
+
+Suppose we have a type "Todo" with the following fields:
+
+1. id of type number;
+
+2. text of type string;
+
+3. completed of type boolean;
+
+And we want to check if the object passed to us fits this type.
+
+To begin with, we need to describe this type using zod:
+
+```ts {1-14}
+import { z } from "zod";
+
+// Define our Todo model using zod
+const Todo = z.object({
+  id: z.string(),
+  text: z.string(),
+  completed: z.boolean(),
+});
+```
+
+Now let's try to check if the object corresponds to this scheme:
+
+```ts {1-6}
+const invalidTodo = {
+  id: "1",
+  text: "Implement a different schema validation library other than zod",
+};
+
+const parsedTodo = Todo.parse(invalidTodo);
+```
+
+Notice that we are using the `parse` method of the `zod` library to parse the object. This will result in a `ParseError` being thrown. Keep in mind, this is **NOT** because the todo text is wrong but becuase zod will report an error if the field is the wrong data type or there is a type error in that the todo object is missing the completed field.
+
+What if we have nested objects? Let's say we have a todo object with the extra following field:
+
+- A todoLists object only for todos which are linked to a todo list, so optional.
+
+```diff {5-8}
+const Todo = z.object({
+  id: z.string(),
+  text: z.string(),
+  completed: z.boolean(),
++  todoList: z.object({
++    id: z.string(),
++  }).optional(),
+});
+```
+
+As the todoList field is optional, the object will still be valid even if `todoList` is missing. This is useful in similar situations to when we don't know if a todo is linked to a todo list or not.
+
+## Advanced validation
+
+With zod we can set rules for many different situations like length, format (e.g. a url), and minimum and maximum values:
+
+```ts {1-6}
+const Todo = z.object({
+  id: z.string(),
+  text: z.string().min(3).max(50),
+  completed: z.boolean(),
+});
+```
+
+## Validating arrays
+
+What if we want to have an array of todos in todoList?
+
+```ts {1-11}
+const Todo = z.object({
+  id: z.string(),
+  text: z.string().min(3).max(50),
+  completed: z.boolean(),
+});
+
+const TodoList = z.object({
+  id: z.string().uuid(),
+  name: z.string().nonempty(),
+  todos: z.array(Todo),
+});
+```
+
+The types are in place, too:
+
+<Image
+  width={411}
+  height={479}
+  src="/images/blog/schema-validation/todolist.png"
+/>
+
+## Conclusion
+
+This concludes my brief overview of the zod library. I hope you found it useful. In this article we covered how this library helps with schema validation and type generation so that you can be sure of your types at compile-time and run-time.
+
+See the [official documentation](https://github.com/colinhacks/zod#readme) for a full list of its features.

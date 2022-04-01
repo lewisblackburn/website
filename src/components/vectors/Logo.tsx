@@ -1,0 +1,29 @@
+import { css } from "@stitches/core";
+import React from "react";
+
+interface Props {
+  width?: number;
+  height?: number;
+}
+
+const Logo = ({ width = 24, height = 24 }: Props) => (
+  <svg
+    width={width}
+    height={height}
+    viewBox="0 0 129.57 107.22"
+    xmlns="http://www.w3.org/2000/svg"
+    className={css({
+      fill: "currentColor",
+      xColor: "$brand",
+    })()}
+  >
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+        <polygon points="129.57 0 22.8 0 22.8 1.17 72.75 40.84 64.73 53.61 86.14 69.08 129.57 0" />
+        <polygon points="0 107.22 106.76 107.22 106.76 106.05 56.81 66.37 64.84 53.61 43.42 38.16 0 107.22" />
+      </g>
+    </g>
+  </svg>
+);
+
+export default Logo;

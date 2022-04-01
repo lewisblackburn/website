@@ -1,0 +1,48 @@
+---
+title: "use-count"
+description: "React Hook to use realtime countapi.xyz data and display it in your application."
+publishedAt: 2022
+cover: use-count.png
+position: 2
+---
+
+Sometimes, building a back-end database is too much overhead. Especially when you only need to store a persistant count. The `use-count` wrapper is for the times when you need simple features such as views or hits like those implemented on this page.
+
+<Playground>
+  <CountDemo />
+</Playground>
+
+React Hook to use realtime countapi.xyz data and display it in your application.
+
+## Features
+
+- 📦 **Tiny**: `use-count` weighs in at **less than** 6.71 KB minified and gzipped.
+- 🌳 **Universal**: we dist esm and cjs modules.
+- 👨‍💻 **Developer friendly**: Helpful development messages that are stripped away in production
+- ⌨️ **Strongly typed**: `use-count` is written in TypeScript and encourages good practices this way
+
+### Installation
+
+##### With NPM
+
+`npm i --save use-count`
+
+##### Or, with yarn:
+
+`yarn add use-count`
+
+## Usage
+
+```tsx {1-9} showLineNumbers
+import { useCount } from "use-count";
+
+const CountDemo = () => {
+  const { value: count } = useCount("lew.sh", "use-count");
+
+  return <div>persistant count : {count}</div>;
+};
+
+export default CountDemo;
+```
+
+A full example can be seen in the [examples](https://github.com/lewisblackburn/use-count/tree/main/example) folder
