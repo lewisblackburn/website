@@ -43,7 +43,7 @@ const Words = ({ words }: PageProps) => {
       >
         <NextSeo title="Words" />
         <h1 className={styles.title}>
-          Words that I read but didn't understand.
+          Words that I read but didn{"'"}t understand.
         </h1>
         <div className={styles.words}>
           {words.map((word) => (
