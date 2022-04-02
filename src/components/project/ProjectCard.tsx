@@ -15,7 +15,7 @@ const styles = {
       "&:hover": {
         xBackground: "$lighterGray",
       },
-      p: "$4",
+      padding: "$4",
       mx: "-$4",
       borderRadius: "$md",
     },
