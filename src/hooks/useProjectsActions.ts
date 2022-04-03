@@ -39,7 +39,7 @@ export default function useProjetsActions() {
         ? {
             id: searchId,
             name: "Search projects…",
-            shortcut: ["?"],
+            shortcut: [">"],
             keywords: "find",
             section: "Go To",
           }

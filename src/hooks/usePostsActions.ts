@@ -39,7 +39,7 @@ export default function usePostsActions() {
         ? {
             id: searchId,
             name: "Search blog…",
-            shortcut: ["?"],
+            shortcut: ["<"],
             keywords: "find",
             section: "Go To",
           }

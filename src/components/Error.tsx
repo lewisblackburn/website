@@ -41,7 +41,6 @@ const Error = ({ status }: Props) => {
                 It doesn’t exist, it never has. I’m nostalgic for a place that
                 never existed.
               </p>
-
               <br />
               <footer>
                 — Aaron Swartz,{" "}

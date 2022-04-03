@@ -15,6 +15,14 @@ import { saveTheme } from "~/hooks/useTheme";
 import useWordsActions from "~/hooks/useWordsActions";
 import { css } from "~/styles";
 import themes, { allThemeClass, ThemeName } from "~/styles/themes";
+import {
+  BufferIcon,
+  CursorTextIcon,
+  HomeIcon,
+  NoteIcon,
+  ReadingIcon,
+  WordsIcon,
+} from "./icons";
 import CopyIcon from "./icons/Copy.icon";
 import SendIcon from "./icons/Send.icon";
 import TerminalIcon from "./icons/Terminal.icon";
@@ -177,7 +185,7 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-home",
       section: "Go To",
       perform: () => router.push("/"),
-      icon: "",
+      icon: <HomeIcon width={16} height={16} />,
     },
     {
       id: "blog",
@@ -186,7 +194,7 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-blog",
       section: "Go To",
       perform: () => router.push("/blog"),
-      icon: "",
+      icon: <CursorTextIcon width={16} height={16} />,
     },
     {
       id: "notes",
@@ -195,7 +203,7 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-notes",
       section: "Go To",
       perform: () => router.push("/notes"),
-      icon: "",
+      icon: <NoteIcon width={16} height={16} />,
     },
     {
       id: "quotes",
@@ -204,16 +212,7 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-quotes",
       section: "Go To",
       perform: () => router.push("/quotes"),
-      icon: "",
-    },
-    {
-      id: "changelog",
-      name: "Changelog",
-      shortcut: ["g", "c"],
-      keywords: "go-changelog",
-      section: "Go To",
-      perform: () => router.push("/changelog"),
-      icon: "",
+      icon: <ReadingIcon width={16} height={16} />,
     },
     {
       id: "words",
@@ -222,7 +221,16 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-words",
       section: "Go To",
       perform: () => router.push("/words"),
-      icon: "",
+      icon: <WordsIcon width={16} height={16} />,
+    },
+    {
+      id: "changelog",
+      name: "Changelog",
+      shortcut: ["g", "c"],
+      keywords: "go-changelog",
+      section: "Go To",
+      perform: () => router.push("/changelog"),
+      icon: <BufferIcon width={16} height={16} />,
     },
     {
       id: "github",
