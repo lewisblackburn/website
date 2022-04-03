@@ -189,6 +189,15 @@ const CommandBarProvider: React.FC = ({ children }) => {
       icon: "",
     },
     {
+      id: "notes",
+      name: "Notes",
+      shortcut: ["g", "n"],
+      keywords: "go-notes",
+      section: "Go To",
+      perform: () => router.push("/notes"),
+      icon: "",
+    },
+    {
       id: "changelog",
       name: "Changelog",
       shortcut: ["g", "c"],

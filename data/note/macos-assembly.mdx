@@ -1,0 +1,50 @@
+---
+title: MacOS assembly
+summary: How to compile and run an assembly file
+publishedAt: 2022-03-01
+---
+
+I had trouble figuring out how to compile an assemble file on MacOS. Here's how to do it.
+
+### Prerequisites
+
+```bash {1}
+brew install nasm gcc
+```
+
+### Add Two Numbers
+
+A simple program to add two numbers.
+
+```nasm {1-12} showLineNumbers
+SECTION .data global _main
+
+SECTION .text
+
+_main:
+    mov     rax, 14 ; move 14 into rax
+    mov     rbx, 10 ; move 10 into rbx
+    add     rax, rbx ; add rax and rbx and store in rax
+
+    ; exit syscall
+    mov     rax, 1
+    int     0x80
+```
+
+1. Convert to object
+
+```bash {1}
+nasm -f macho64 add.asm
+```
+
+2. Compile
+
+```bash {1}
+gcc -o add add.o
+```
+
+3. Run
+
+```bash {1}
+./add
+```

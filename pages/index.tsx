@@ -1,5 +1,4 @@
 import { allProjects } from "contentlayer/generated";
-import { useKBar } from "kbar";
 import type { GetStaticProps } from "next";
 import { NextSeo } from "next-seo";
 import { useMemo } from "react";
