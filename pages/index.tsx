@@ -1,9 +1,11 @@
 import { allProjects } from "contentlayer/generated";
+import { useKBar } from "kbar";
 import type { GetStaticProps } from "next";
 import { NextSeo } from "next-seo";
 import { useMemo } from "react";
 import CountUp from "react-countup";
 import useSWR from "swr";
+import { Button } from "~/components";
 import { ProjectCard } from "~/components/project";
 import { attachMainLayout, MainWrapper } from "~/layouts/Main.layout";
 import { dateToAge } from "~/lib/dateToAge";
@@ -25,6 +27,7 @@ export const getStaticProps: GetStaticProps<PageProps> = () => {
 };
 
 const Index = ({ projects }: PageProps) => {
+  const { query } = useKBar();
   const dob = useMemo(() => dateToAge(new Date("2004-04-14")), []);
   const { data: lastFM } = useSWR<LastFM>("/api/scrobbles", fetcher);
 
@@ -90,6 +93,13 @@ const Index = ({ projects }: PageProps) => {
               : "00"}{" "}
             songs a day.
           </p>
+
+          <Button
+            style={{ width: "fit-content" }}
+            onClick={() => query.toggle()}
+          >
+            Press command + k
+          </Button>
         </div>
         <div
           className={stack({

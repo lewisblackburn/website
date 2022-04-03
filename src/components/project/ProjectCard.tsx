@@ -35,7 +35,7 @@ const styles = {
     ellipsis: "true",
     css: {
       xColor: "$alphaGray",
-      maxWidth: "250px",
+      maxWidth: "230px",
       "@sm": {
         maxWidth: "$lg",
       },
