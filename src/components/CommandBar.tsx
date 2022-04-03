@@ -9,9 +9,10 @@ import {
 } from "kbar";
 import { useRouter } from "next/router";
 import React from "react";
-import usePostsActions from "~/hooks/usePostsAction";
-import useProjetsActions from "~/hooks/useProjectsAction";
+import usePostsActions from "~/hooks/usePostsActions";
+import useProjetsActions from "~/hooks/useProjectsActions";
 import { saveTheme } from "~/hooks/useTheme";
+import useWordsActions from "~/hooks/useWordsActions";
 import { css } from "~/styles";
 import themes, { allThemeClass, ThemeName } from "~/styles/themes";
 import CopyIcon from "./icons/Copy.icon";
@@ -110,6 +111,8 @@ export default function CommandBar(props: any) {
 
 const CommandBarPortal = () => {
   usePostsActions();
+  useProjetsActions();
+  useWordsActions();
 
   return (
     <KBarPortal>
@@ -253,8 +256,6 @@ const CommandBarProvider: React.FC = ({ children }) => {
 
 function RenderResults() {
   const { results } = useMatches();
-  usePostsActions();
-  useProjetsActions();
 
   return (
     <KBarResults
