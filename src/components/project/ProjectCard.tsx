@@ -35,7 +35,10 @@ const styles = {
     ellipsis: "true",
     css: {
       xColor: "$alphaGray",
-      maxWidth: "$lg",
+      maxWidth: "250px",
+      "@sm": {
+        maxWidth: "$lg",
+      },
     },
   }),
   dots: css({
