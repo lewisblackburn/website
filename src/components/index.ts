@@ -8,3 +8,4 @@ export { default as ScrollArea } from "./ScrollArea";
 export { default as NowPlaying } from "./NowPlaying";
 export { default as MDXComponents } from "./mdx";
 export { default as Button } from "./Button";
+export { default as Error } from "./Error";
