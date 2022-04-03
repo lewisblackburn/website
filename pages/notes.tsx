@@ -1,4 +1,4 @@
-import { allNotes } from "contentlayer/generated";
+import { allNotes, Note } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 import { GetStaticProps } from "next";
 import { useMDXComponent } from "next-contentlayer/hooks";
@@ -11,35 +11,27 @@ import { container } from "~/styles/primitives";
 import { NoteWithBody } from "~/types/note.type";
 
 interface PageProps {
-  notes: NoteWithBody[];
+  notes: Note;
 }
 
 export const getStaticProps: GetStaticProps<PageProps> = () => {
-  const notes = allNotes.sort((a, b) =>
-    compareDesc(new Date(a.publishedAt), new Date(b.publishedAt))
-  );
+  const notes = allNotes[0];
 
   return { props: { notes } };
 };
 
 const Notes = ({ notes }: PageProps) => {
+  const MDXContent = useMDXComponent(notes.body.code);
+
   return (
     <MainWrapper title="Notes">
       <NextSeo title="Notes" />
-      {notes.map((note) => {
-        const MDXContent = useMDXComponent(note.body.code);
-
-        return (
-          <>
-            <Hero {...note} />
-            <div className={container({ size: "small", css: { mb: "$32" } })}>
-              <ArticleNoElipsis>
-                <MDXContent components={MDXComponents} />
-              </ArticleNoElipsis>
-            </div>
-          </>
-        );
-      })}
+      <div className={container({ size: "small" })}>
+        <ArticleNoElipsis>
+          <MDXContent components={MDXComponents} />
+        </ArticleNoElipsis>
+      </div>
+      );
     </MainWrapper>
   );
 };

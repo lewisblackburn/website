@@ -1,8 +1,42 @@
 ---
-title: MacOS assembly
-summary: How to compile and run an assembly file
-publishedAt: 2022-03-01
+title:
+summary:
+publishedAt: 2022-04-03
 ---
+
+<Text as="h2" center>
+  Next Dynamic Routes
+</Text>
+
+<Tab>
+
+  <Tab.Item title="Incorrect">
+
+    ```tsx {1}
+    <Link href={`/${path}/${slug}`}>
+      <a>{snippet.name}</a>
+    </Link>
+    ```
+
+  </Tab.Item>
+
+  <Tab.Item title="Correct">
+
+    ```tsx {1}
+    <Link href={{ pathname: "/[path]/[slug]", query: { path, slug } }}>
+      <a>{snippet.name}</a>
+    </Link>
+    ```
+
+  </Tab.Item>
+
+</Tab>
+
+<br />
+
+<Text as="h2" center>
+  MacOS assembly
+</Text>
 
 I had trouble figuring out how to compile an assemble file on MacOS. Here's how to do it.
 
