@@ -100,9 +100,26 @@ export const Note = defineDocumentType(() => ({
   },
 }));
 
+export const Quote = defineDocumentType(() => ({
+  name: "Quote",
+  contentType: "mdx",
+  filePathPattern: `quote/*.mdx`,
+  fields: {},
+  computedFields: {
+    path: {
+      type: "string",
+      resolve: (doc) => doc._raw.sourceFileDir,
+    },
+    slug: {
+      type: "string",
+      resolve: (doc) => doc._raw.sourceFileName.replace(/\.mdx$/, ""),
+    },
+  },
+}));
+
 export default makeSource({
   contentDirPath: "data",
-  documentTypes: [Blog, Project, Tag, Word, Note],
+  documentTypes: [Blog, Project, Tag, Word, Note, Quote],
   mdx: {
     rehypePlugins: [rehypePrism, rehypeSlug],
   },

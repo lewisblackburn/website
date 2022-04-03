@@ -1,49 +1,25 @@
-import QuotationMark from '../vectors/QuotationMark'
-
-import { css } from '~/styles'
-import { text } from '~/styles/primitives'
+import { text } from "~/styles/primitives";
 
 const styles = text({
-  weight: 'light',
-  leading: 'relaxed',
-  tracking: 'tight',
-  size: {
-    '@initial': 'lg',
-    '@lg': '2xl'
-  },
+  weight: "light",
+  leading: "relaxed",
+  tracking: "tight",
   css: {
-    xColor: '$fg1',
-    position: 'relative',
     cite: {
-      letterSpacing: '$normal',
-      fontSize: '$sm',
-      '@lg': { fontSize: '$base' }
+      letterSpacing: "$normal",
+      fontSize: "$xs",
+      "@lg": { fontSize: "$base" },
     },
-    '.quotation': {
-      opacity: 0.1,
-      width: 80,
-      height: 80,
-      position: 'absolute',
-      left: -15,
-      top: -25,
-      '@md': {
-        left: -85,
-        top: -15
-      },
-      '@lg': {
-        top: 0
-      }
-    }
-  }
-})
+    fontStyle: "italic",
+    margin: 0,
+    pl: "$4",
+    borderLeft: "3px solid transparent",
+    borderColor: "rgb($rgb$brand / 0.2)",
+  },
+});
 
 const Blockquote = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <blockquote className={styles}>
-      <QuotationMark className="quotation" />
-      {children}
-    </blockquote>
-  )
-}
+  return <blockquote className={styles}>{children}</blockquote>;
+};
 
-export default Blockquote
+export default Blockquote;
