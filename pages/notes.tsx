@@ -1,14 +1,11 @@
 import { allNotes, Note } from "contentlayer/generated";
-import { compareDesc } from "date-fns";
 import { GetStaticProps } from "next";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import { NextSeo } from "next-seo";
 import { MDXComponents } from "~/components";
 import { ArticleNoElipsis } from "~/components/Article";
-import { Hero } from "~/components/note";
 import { attachMainLayout, MainWrapper } from "~/layouts/Main.layout";
 import { container } from "~/styles/primitives";
-import { NoteWithBody } from "~/types/note.type";
 
 interface PageProps {
   notes: Note;
@@ -31,7 +28,6 @@ const Notes = ({ notes }: PageProps) => {
           <MDXContent components={MDXComponents} />
         </ArticleNoElipsis>
       </div>
-      );
     </MainWrapper>
   );
 };
