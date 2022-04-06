@@ -1,23 +1,23 @@
-import Image from 'next/image'
-import { useState } from 'react'
+import Image from "next/image";
+import { useState } from "react";
 
-import { css } from '~/styles'
+import { css } from "~/styles";
 
-import type { ImageProps } from 'next/image'
+import type { ImageProps } from "next/image";
 
 const styles = {
   img: css({
-    transitionDuration: '0.5s',
-    transitionTimingFunction: 'ease-in-out'
+    transitionDuration: "0.5s",
+    transitionTimingFunction: "ease-in-out",
   })(),
   imgBlur: css({
-    willChange: 'transform',
-    transform: 'scale(1.05)'
-  })()
-}
+    willChange: "transform",
+    transform: "scale(1.05)",
+  })(),
+};
 
 interface Props {
-  blurClassName?: string
+  blurClassName?: string;
 }
 
 const BlurImage = ({
@@ -25,7 +25,7 @@ const BlurImage = ({
   blurClassName = styles.imgBlur,
   ...imgProps
 }: ImageProps & Props) => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   return (
     <Image
@@ -35,7 +35,7 @@ const BlurImage = ({
       onLoadingComplete={() => setLoading(false)}
       placeholder="blur"
     />
-  )
-}
+  );
+};
 
-export default BlurImage
+export default BlurImage;

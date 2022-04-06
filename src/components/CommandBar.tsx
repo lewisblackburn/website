@@ -233,6 +233,15 @@ const CommandBarProvider: React.FC = ({ children }) => {
       icon: <BufferIcon width={16} height={16} />,
     },
     {
+      id: "aesthetic",
+      name: "Aesthetic",
+      shortcut: ["g", "a"],
+      keywords: "go-aesthetic",
+      section: "Go To",
+      perform: () => router.push("/aesthetic"),
+      icon: "",
+    },
+    {
       id: "github",
       name: "Github",
       shortcut: ["f", "g"],
