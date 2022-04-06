@@ -22,10 +22,11 @@ import {
   NoteIcon,
   ReadingIcon,
   WordsIcon,
+  CopyIcon,
+  SendIcon,
+  TerminalIcon,
+  CameraIcon,
 } from "./icons";
-import CopyIcon from "./icons/Copy.icon";
-import SendIcon from "./icons/Send.icon";
-import TerminalIcon from "./icons/Terminal.icon";
 import GitHubLogo from "./vectors/GitHubLogo";
 import TwitterLogo from "./vectors/TwitterLogo";
 
@@ -239,7 +240,7 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-aesthetic",
       section: "Go To",
       perform: () => router.push("/aesthetic"),
-      icon: "",
+      icon: <CameraIcon width={16} height={16} />,
     },
     {
       id: "github",
@@ -248,7 +249,7 @@ const CommandBarProvider: React.FC = ({ children }) => {
       keywords: "go-github",
       section: "Follow",
       perform: () => window.open("https://github.com/lewisblackburn", "_blank"),
-      icon: <GitHubLogo width={16} height={16} />,
+      icon: <GitHubLogo width={16} height={24} />,
     },
     {
       id: "theme",

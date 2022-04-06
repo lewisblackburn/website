@@ -11,3 +11,7 @@ export { default as NoteIcon } from "./Note.icon";
 export { default as CursorTextIcon } from "./CursorText.icon";
 export { default as HomeIcon } from "./Home.icon";
 export { default as BufferIcon } from "./Buffer.icon";
+export { default as CopyIcon } from "./Copy.icon";
+export { default as SendIcon } from "./Send.icon";
+export { default as TerminalIcon } from "./Terminal.icon";
+export { default as CameraIcon } from "./Camera.icon";
