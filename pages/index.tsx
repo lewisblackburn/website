@@ -8,8 +8,8 @@ import useSWR from "swr";
 import { Button } from "~/components";
 import { ProjectCard } from "~/components/project";
 import { attachMainLayout, MainWrapper } from "~/layouts/Main.layout";
-import { dateToAge } from "~/lib/dateToAge";
 import { fetcher } from "~/lib/fetcher";
+import { age } from "~/lib/time";
 import { container, stack } from "~/styles/primitives";
 import { LastFM } from "~/types/lastfm.type";
 import { ProjectProperties } from "~/types/project.type";
@@ -28,7 +28,6 @@ export const getStaticProps: GetStaticProps<PageProps> = () => {
 
 const Index = ({ projects }: PageProps) => {
   const { query } = useKBar();
-  const dob = useMemo(() => dateToAge(new Date("2004-04-14")), []);
   const { data: lastFM } = useSWR<LastFM>("/api/scrobbles", fetcher);
 
   return (
@@ -50,19 +49,7 @@ const Index = ({ projects }: PageProps) => {
           })}
         >
           <p>
-            Hey, {"I'm"} Lewis J.A Blackburn. {"I'm"} a ~
-            <CountUp
-              onEnd={(p) => {
-                p.update(dateToAge(new Date("2004-04-14")));
-              }}
-              duration={5}
-              decimals={9}
-              // Prevent the count from taking too long to get to age
-              start={global.document && dob - 0.0001}
-              end={dob}
-            />
-          </p>
-          <p>
+            Hey, {"I'm"} Lewis J.A Blackburn. {"I'm"} a ~{age.toPrecision(10)}{" "}
             year old software developer from the United Kingdom, {"I'm"}{" "}
             interested in full-stack web development focusing on large scale
             type-safe graphql applications.
