@@ -1,0 +1,66 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "CI"
+  ],
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "cache": false
+    },
+    "lint:fix": {
+      "cache": false
+    },
+    "start": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "db:check": {},
+    "db:generate": {},
+    "db:push": {},
+    "type-check": {},
+    "blog#build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "env": [
+        "ANALYZE",
+        "SPOTIFY_CLIENT_ID",
+        "SPOTIFY_CLIENT_SECRET",
+        "SPOTIFY_REFRESH_TOKEN",
+        "LASTFM_API_KEY",
+        "IP_ADDRESS_SALT"
+      ]
+    },
+    "ui#build": {
+      "dependsOn": [
+        "utils#build"
+      ]
+    }
+  }
+}

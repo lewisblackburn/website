@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+  "access": "public",
+  "baseBranch": "main",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "zxffo/lewisblackburn.me"
+    }
+  ],
+  "commit": false,
+  "fixed": [],
+  "ignore": ["blog", "@zxffo/emails", "@zxffo/mdx"],
+  "linked": [],
+  "updateInternalDependencies": "patch"
+}

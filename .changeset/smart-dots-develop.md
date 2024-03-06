@@ -1,0 +1,5 @@
+---
+"@zxffo/utils": patch
+---
+
+refactor

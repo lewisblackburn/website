@@ -1,0 +1,25 @@
+{
+  "name": "@zxffo/tsconfig",
+  "version": "0.0.1",
+  "description": "The typescript config for zxffo's projects",
+  "license": "MIT",
+  "author": "zxffo <me@lewisblackburn.me> (https://github.com/zxffo/)",
+  "homepage": "https://github.com/zxffo/lewisblackburn.me#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxffo/lewisblackburn.me.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zxffo/lewisblackburn.me/issues"
+  },
+  "files": [
+    "base.json",
+    "nextjs.json"
+  ],
+  "peerDependencies": {
+    "typescript": "5.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

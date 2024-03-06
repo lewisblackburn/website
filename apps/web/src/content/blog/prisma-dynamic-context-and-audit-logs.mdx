@@ -1,0 +1,374 @@
+---
+title: Dynamic Prisma Context and Audit Logs
+date: '2024-02-18T00:00:00Z'
+modifiedTime: '2024-02-19T00:00:00Z'
+summary: I recently struggled creating audit logs for a project with Prisma. Here is how I solved it.
+---
+
+Recently, I ran into a mountain of errors whilst trying to create a sophisticated audit log system using Prisma. It felt like every step I turned was the wrong one.
+I tried `$transaction` queries, Prisma clientExtensions and SQL triggers but there was always some kink that couldn't be ironed out. Whether it be the inability to access user context, unable to access before and after content or `$transaction` timeout errors.
+There was always something that couldn't be bypassed. Here's how I *eventually* solved it.
+
+There were a few things I wanted to acheive:
+
+1. An audit log should have a user relation (e.g. store the userId).
+2. Be abstracted away from models.
+3. Stores the before and after content of the change.
+
+# The first and worst solution
+
+The first and worst solution was really clunky. It was the first tackle I had at
+the problem and decided to just brute force the issue. I create an `AuditLog` table and just
+created a new entry after every update manually.
+
+```ts title="film-editor.server.ts" {19}
+export async function action({ request }: ActionFunctionArgs) {
+	const userId = await requireUserId(request)
+
+	const currentFilm = await prisma.film.findUnique({
+    where: { id: filmId },
+  })
+
+	const updatedFilm = await prisma.film.upsert({
+	  select: { id: true },
+	  where: { id: filmId ?? '__new_film__' },
+	  create: {
+		  title,
+	  },
+	  update: {
+		  title,
+	  },
+  })
+
+  log('film', updatedFilm.id, userId, 'update', currentFilm, updatedFilm)
+
+  return redirectWithToast(`/films/${updatedFilm.id}`, {
+	  type: 'success',
+	  title: 'Success',
+	  description: 'The film has been updated.',
+  })
+}
+```
+
+# using SQL Triggers
+
+This is where I turned to SQL triggers, I thought i'd solved the problem and this would be the end of it. With the only
+caveat being that I had to add a `lastUpdatedByUserId` column to every table. This would make the talbes unnormailsed, but I was willing
+to accpet that if it meant I could have audit logs working.
+
+```sql title="migration.sql"
+CREATE TRIGGER IF NOT EXISTS after_insert_film
+AFTER
+INSERT ON Film FOR EACH ROW BEGIN
+INSERT INTO FilmEdit (
+    operation,
+    userId,
+    filmId,
+    oldValues,
+    newValues
+  )
+VALUES (
+    'INSERT',
+    NEW.lastUpdatedByUserId,
+    NEW.id,
+    NULL,
+    json_object(
+      'title',
+      NEW.title,
+      'overview',
+      NEW.overview,
+      ...
+    )
+  );
+END;
+```
+
+The great thing about this method was that SQL provides `OLD` and `NEW` objects that contain the before and after content oof the change.
+This was perfact for what I wanted to acheive. However, they aren't stored as objects e.g. I can't loop through the JSON object and would
+have to list out every single field in the table. This was a deal breaker for me, as there are many tables that I would have to keep
+trakc and up to date with changes when I updated the database.
+
+The real downfall of this system was the fact that SQL is a declarative langauge rather than a imperative language like TypeScript.
+
+# using Prisma clientExtensions
+
+This was actually the first solution that I thought of, but it quickly went [word] when I couldn't get the user context. So, I moved
+on pretty quickly past this method. However, later, I found out how to add user context to queries. It isn't the best method, but it's the best
+so far.
+
+The major problem with this method is that it doesn't work with Prisma `$transaction` queries as the middleware doesn't know it is
+inside of a transaction query ([reference](https://github.com/prisma/prisma/discussions/20016)). A transaction query is a query that is wrapped in a transaction, so if one query fails, the whole transaction will
+be rolled back. At the moment, I have just removed all `$transaction` queries from my codebase, but I will have to come back to this at some point.
+This is a major problem as I have to use `$transaction` with Prisma middleware and return this error:
+
+```json
+{
+  "code": "P2028",
+  "clientVersion": "4.16.1",
+  "meta": {
+    "error": "Transaction already closed: A query cannot be executed on an expired transaction. The timeout for this transaction was 5000 ms, however 5029 ms passed since the start of the transaction. Consider increasing the interactive transaction timeout or doing less work in the transaction."
+  }
+}
+```
+
+## Adding user context to Prisma queries
+
+To add user context to Prisma queries, I created a `withQueryContext` funciton that adds the user context to the query.
+That is, until user context is fully supported.
+
+``` ts title="misc.ts"
+/**
+ * Adds query context to the arguments.
+ * @param args - The arguments to add query context to.
+ * @param userId - The user ID.
+ * @param modelId - The model ID.
+ * @returns The arguments with query context added.
+ */
+export function withQueryContext<T>(
+	args: T,
+	{ userId, modelId }: { userId: string; modelId: string | null },
+) {
+	;(args as any).userId = userId
+	;(args as any).modelId = modelId
+	return args
+}
+```
+
+Now we can wrap any Prisa query with the `withQueryContext` function to add the user context to the query.
+
+```ts title="film-editor.server.ts"
+export async function action({ request }: ActionFunctionArgs) {
+	const userId = await requireUserId(request)
+	const formData = await request.formData()
+
+	const { id: filmId, title } = submission.value
+
+	const updatedFilm = await prisma.film.upsert(
+		withQueryContext(
+			{
+				select: { id: true },
+				where: { id: filmId ?? '__new_film__' },
+				create: {
+					title,
+				},
+				update: {
+					title,
+				},
+			},
+			{ userId, modelId: filmId ?? null },
+		),
+	)
+
+	return json({ updatedFilm });
+}
+```
+
+This will cause an error with Prisma, so in middleware we need to remove the `userId` and `modelId` from the query after we have
+used it.
+
+```ts title="audit.extension.ts" {9, 13}
+export const auditLog = Prisma.defineExtension(client => {
+	return client.$extends({
+		query: {
+			async $allOperations(props) {
+				const { userId, modelId, ...args } = props.args as any
+				const { operation, model } = props
+
+				// Exclude operations that can't be audited
+				if (props.operation.includes('$')) return await props.query({ ...args })
+
+				// Do what you want with userId and modelId...
+
+				return query({ ...args })
+			},
+		},
+	})
+})
+```
+
+As you can see, we only return the rest of the arguments and not `userId` and `modelId` to avoid any errors. However, now we can
+still use the values in the middleware.
+
+## Adding Audit Logs to Prisma
+
+Now that we have the dynamic context sorted, we can move on to audit logs. I've already shown the base of the
+code in the last codeblock. But here, I will go through each section in detail.
+
+```ts title="audit.extension.ts"
+const modelsToInclude: Prisma.ModelName[] = [
+	Prisma.ModelName.Film,
+]
+
+const uniqueOperations: Prisma.PrismaAction[] = [
+	'create',
+	'update',
+	'delete',
+	'upsert',
+]
+const manyOperations: Prisma.PrismaAction[] = [
+	'createMany',
+	'updateMany',
+	'deleteMany',
+]
+const operationsToAudit: Prisma.PrismaAction[] =
+	uniqueOperations.concat(manyOperations)
+const fieldsToIgnore: string[] = ['updatedAt']
+```
+
+First, we should define the models that we want to include in the audit logs. This is so we can ignore any
+tables that don't need audit logs e.g. the audit log table itself. Then, we also define the operations that we want to
+audit and the fields we want to ignore. We only want to create audit logs for **create**, **update** and **delete** operations. We also want to ignore the `updatedAt` field
+as this will always change in these operations (except for delete). This extends to the many operations too, although
+I haven't implemented audit logs for these yet, so I will just go through the unique operations.
+
+```ts title="audit.extension.ts"
+export const auditLog = Prisma.defineExtension(client => {
+	return client.$extends({
+		query: {
+			async $allOperations(props) {
+
+			  // previous code...
+
+				const shouldAudit =
+					operationsToAudit.includes(operation) &&
+					model &&
+					modelsToInclude.includes(model)
+
+				if (!shouldAudit) {
+					return await props.query({ ...args })
+				}
+
+				if (!userId) return await props.query({ ...args })
+
+				// further code ...
+
+			},
+		},
+	})
+})
+```
+
+If the model has been validated as not something that we want to audit, then we should just return the query as
+it was. If the user isn't authenticated, then we can't create an audit log, so again we should just return the query.
+
+With SQL Triggers, we could access the `OLD` and `NEW` objects to get the changes that were made. However,
+with Prisma, we can't take advantage of this. Instead, we have to query the current model for the previous
+state of the data and then later execure the original query to get the changes.
+
+```ts
+const getOldValue = async (client: any, params: any) => {
+	const { model, operation, args } = params
+
+	if (model) {
+		if (uniqueOperations.includes(operation)) {
+			const result = await client[model].findUnique({ where: args.where })
+			return result === null ? {} : result
+		} else if (manyOperations.includes(operation)) {
+			const result = await client[model].findMany({ where: args.where })
+			return result === null ? {} : result
+		} else {
+			console.warn('Unhandeled operation: ', operation)
+			return {}
+		}
+	}
+
+	console.warn("Model doesn't exist")
+	return {}
+}
+```
+
+This function will query the model for the "previous" (current) data. If the operation is a unique operation, then we
+run `findUnique` and if it is a many operation, then we run `findMany`. We then return the result or an empty object if
+the result is null. This makes it easier later on to create a `difference` function for the two objects.
+
+I struggled to create a type for `params` besides using `any`. I tried using `Prisma.Extension["query"]` which worked to a certain point but the types weren't quite right.
+If you have any suggestions please let me know! ([reference](https://github.com/search?q=repo%3Azxffo/petal%20getOldValue&type=code)).
+Also, there is a known issue where the PrismaClient type is wrong when being used with `.$extends` so I just use and any in this case too. I could pass it as a generic.
+
+```ts file="audit.extension.ts"
+// previous code ...
+
+let oldValues = {}
+let newValues = {}
+
+const before =
+	operation === 'create' ? {} : await getOldValue(client, props)
+
+// Remove select from args, so we can compare the before and after
+const removeSelectFromArgs = { ...args }
+delete removeSelectFromArgs.select
+// Perform the actual db operation
+const result = await props.query({ ...removeSelectFromArgs })
+
+const after = result
+
+// If the old and new values are the same, then we don't need to create an audit log (e.g. no changes were made)
+if (equal(before, after, fieldsToIgnore)) return result
+
+const isDeleteOperation =
+	operation === 'delete' || operation === 'deleteMany'
+
+oldValues = isDeleteOperation
+	? before
+	: difference(before, after, fieldsToIgnore).oldValues
+newValues = isDeleteOperation
+	? {}
+	: difference(before, after, fieldsToIgnore).newValues
+
+// further code ...
+```
+
+Here we intialise `oldValues` and `newValues` to an empty object for comparison later on.
+If it's a `create` operation we just return an empty object as there will be no old value.
+The `getOldValue` function will either query the current model or just return an empty object.
+From here, we need to remove any "select" parameters that may have been added as this will
+prevent us from comparing the data. Then we call the actual query which should return the
+result of the operation. I created an `equal` helper function to compare the objects as if
+they are equal there is no need to create an audit log [(reference)](https://github.com/zxffo/petal/blob/6d2b1941fa2991a9516ee663f2e4259ab9e12120/app/utils/misc.tsx#L666
+).
+
+We now need to check if it is a delete operation, as if it is we don't need to do the difference
+checks.
+
+```ts
+// previous code ...
+
+try {
+	await client.$transaction(async $prisma => {
+		await $prisma.filmEdit.create({
+			data: {
+				model: model || 'Unknown',
+				operation,
+				userId,
+				// @ts-expect-error id and filmId are not always defined
+				filmId: modelId ?? newValues?.id ?? newValues?.filmId,
+				oldValues: JSON.stringify(oldValues),
+				newValues: JSON.stringify(newValues),
+			},
+		})
+		await $prisma.user.update({
+			where: { id: userId },
+			data: { totalEdits: { increment: 1 } },
+		})
+	})
+} catch (e) {
+	// Don't throw error if audit fails, only log it
+	console.error('Failed to create Audit', e)
+}
+
+return result
+```
+
+Finally, we can create the audit log and return the result. This is fairly self-explanatory
+so I won't go into too much detail, but, we just create the audit log in the database and update the
+total user edits by one. I have separated audit logs into multiple tables but you could just do it
+in one. I use a `$transaction` query here to rollback any changes if either of the transactions
+fail.
+
+As you can see, I have also used a `totalEdits` column to store the total edits for efficiency
+rather than doing an aggregate query each time.
+
+Well, this is how I solved my audit log dilemma. However, as mentioned before, the client
+extensions won't have access to `$transaction` context and so it will result in a
+timeout error. At the moment, there is no way around this other than using more than
+one Prisma instance or just removing $transaction queries in places where you require middleware.

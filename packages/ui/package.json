@@ -1,0 +1,76 @@
+{
+  "name": "@zxffo/ui",
+  "version": "0.0.4",
+  "description": "The UI components for zxffo's projects",
+  "license": "MIT",
+  "author": "zxffo <me@lewisblackburn.me> (https://github.com/zxffo/)",
+  "homepage": "https://github.com/zxffo/lewisblackburn.me#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxffo/lewisblackburn.me.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zxffo/lewisblackburn.me/issues"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf .turbo dist",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint --fix .",
+    "type-check": "tsc --noEmit"
+  },
+  "types": "./dist/index.d.mts",
+  "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-aspect-ratio": "^1.0.3",
+    "@radix-ui/react-avatar": "^1.0.4",
+    "@radix-ui/react-checkbox": "^1.0.4",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-scroll-area": "^1.0.5",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-separator": "^1.0.3",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-tooltip": "^1.0.7",
+    "class-variance-authority": "^0.7.0",
+    "cmdk": "^0.2.0",
+    "framer-motion": "^11.0.6",
+    "lucide-react": "^0.331.0",
+    "react-textarea-autosize": "^8.5.3",
+    "sonner": "^1.4.1"
+  },
+  "peerDependencies": {
+    "@zxffo/utils": ">=0",
+    "next": ">=13",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@zxffo/eslint-config": "workspace:*",
+    "@zxffo/tailwind-config": "workspace:*",
+    "@zxffo/tsconfig": "workspace:*",
+    "@zxffo/utils": "workspace:*",
+    "@types/react": "^18.2.58",
+    "eslint": "^8.57.0",
+    "next": "14.1.1-canary.44",
+    "react": "^18.2.0",
+    "tailwindcss": "^3.4.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    }
+  }
+}

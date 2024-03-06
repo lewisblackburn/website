@@ -1,0 +1,29 @@
+{
+  "name": "@zxffo/tailwind-config",
+  "version": "0.0.1",
+  "description": "The Tailwind CSS configuration for zxffo's projects",
+  "license": "MIT",
+  "author": "zxffo <me@lewisblackburn.me> (https://github.com/zxffo/)",
+  "homepage": "https://github.com/zxffo/lewisblackburn.me#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxffo/lewisblackburn.me.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zxffo/lewisblackburn.me/issues"
+  },
+  "main": "tailwind.config.ts",
+  "files": [
+    "tailwind.config.ts"
+  ],
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
