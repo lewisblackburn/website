@@ -6,7 +6,7 @@ import * as React from 'react'
 
 const TEXTS = [
   {
-    text: 'type-safe graphql applications.',
+    text: 'web development.',
     className:
       'bg-clip-text text-transparent bg-gradient-to-r from-[#ff1835] to-[#ffc900]'
   },
@@ -45,7 +45,7 @@ const Hero = () => {
   }, [animate, scope])
 
   return (
-    <div className='space-y-6 md:my-16'>
+    <div className='my-16 space-y-6'>
       <div className='flex flex-col-reverse gap-8 md:flex-row md:justify-between'>
         <motion.div
           className='flex flex-col gap-4 will-change-[transform,opacity] md:max-w-xl'

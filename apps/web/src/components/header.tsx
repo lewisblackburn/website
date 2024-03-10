@@ -50,7 +50,7 @@ const Header = ({ posts }: { posts: BlogMetadata[] }) => {
     >
       <a
         href='#skip-nav'
-        className='fixed left-4 top-4 translate-y-20 rounded-sm border bg-background p-2 font-medium shadow-sm transition-transform focus-visible:translate-y-0 focus-visible:ring focus-visible:ring-ring focus-visible:ring-offset-2'
+        className='fixed left-4 top-4 block translate-y-20 rounded-sm border bg-background p-2 font-medium shadow-sm transition-transform focus-visible:translate-y-0 focus-visible:ring focus-visible:ring-ring focus-visible:ring-offset-2 sm:hidden'
       >
         <span>Skip to main content</span>
       </a>
