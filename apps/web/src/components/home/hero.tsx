@@ -21,7 +21,7 @@ const TEXTS = [
       'bg-clip-text text-transparent bg-gradient-to-r from-[#7f00de] to-[#ff007f]'
   },
   {
-    text: 'type-safe graphql applications.',
+    text: 'web development.',
     className:
       'bg-clip-text text-transparent bg-gradient-to-r from-[#ff1835] to-[#ffc900]'
   }
