@@ -3,6 +3,7 @@ import {
   SiGithub,
   SiInstagram,
   SiLastdotfm,
+  SiLinkedin,
   SiX,
   SiYoutube
 } from '@icons-pack/react-simple-icons'
@@ -68,6 +69,11 @@ export const HEADER_LINKS: HeaderLinks = [
 ]
 
 export const SOCIAL_LINKS: SocialLinks = [
+  {
+    href: 'https://www.linkedin.com/in/lewisblackburn/',
+    title: 'LinkedIn',
+    icon: SiLinkedin
+  },
   {
     href: 'https://github.com/zxffo',
     title: 'GitHub',
