@@ -75,7 +75,7 @@ export const SOCIAL_LINKS: SocialLinks = [
     icon: SiLinkedin
   },
   {
-    href: 'https://github.com/zxffo',
+    href: 'https://github.com/lewisblackburn',
     title: 'GitHub',
     icon: SiGithub
   },
@@ -85,7 +85,7 @@ export const SOCIAL_LINKS: SocialLinks = [
     icon: Video
   },
   {
-    href: 'https://www.last.fm/user/zxffo',
+    href: 'https://www.last.fm/user/lewisblackburn',
     title: 'LastFM',
     icon: SiLastdotfm
   },
