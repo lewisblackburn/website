@@ -7,7 +7,7 @@ summary: I recently struggled creating audit logs for a project with Prisma. Her
 
 Recently, I ran into a mountain of errors whilst trying to create a sophisticated audit log system using Prisma. It felt like every step I turned was the wrong one.
 I tried `$transaction` queries, Prisma clientExtensions and SQL triggers but there was always some kink that couldn't be ironed out. Whether it be the inability to access user context, unable to access before and after content or `$transaction` timeout errors.
-There was always something that couldn't be bypassed. Here's how I *eventually* solved it.
+There was always something that couldn't be bypassed. Here's how I _eventually_ solved it.
 
 There were a few things I wanted to acheive:
 
@@ -23,29 +23,29 @@ created a new entry after every update manually.
 
 ```ts title="film-editor.server.ts" {19}
 export async function action({ request }: ActionFunctionArgs) {
-	const userId = await requireUserId(request)
+  const userId = await requireUserId(request)
 
-	const currentFilm = await prisma.film.findUnique({
-    where: { id: filmId },
+  const currentFilm = await prisma.film.findUnique({
+    where: { id: filmId }
   })
 
-	const updatedFilm = await prisma.film.upsert({
-	  select: { id: true },
-	  where: { id: filmId ?? '__new_film__' },
-	  create: {
-		  title,
-	  },
-	  update: {
-		  title,
-	  },
+  const updatedFilm = await prisma.film.upsert({
+    select: { id: true },
+    where: { id: filmId ?? '__new_film__' },
+    create: {
+      title
+    },
+    update: {
+      title
+    }
   })
 
   log('film', updatedFilm.id, userId, 'update', currentFilm, updatedFilm)
 
   return redirectWithToast(`/films/${updatedFilm.id}`, {
-	  type: 'success',
-	  title: 'Success',
-	  description: 'The film has been updated.',
+    type: 'success',
+    title: 'Success',
+    description: 'The film has been updated.'
   })
 }
 ```
@@ -103,8 +103,8 @@ This is a major problem as I have to use `$transaction` with Prisma middleware a
 
 ```json
 {
-  "code": "P2028",
   "clientVersion": "4.16.1",
+  "code": "P2028",
   "meta": {
     "error": "Transaction already closed: A query cannot be executed on an expired transaction. The timeout for this transaction was 5000 ms, however 5029 ms passed since the start of the transaction. Consider increasing the interactive transaction timeout or doing less work in the transaction."
   }
@@ -116,7 +116,7 @@ This is a major problem as I have to use `$transaction` with Prisma middleware a
 To add user context to Prisma queries, I created a `withQueryContext` funciton that adds the user context to the query.
 That is, until user context is fully supported.
 
-``` ts title="misc.ts"
+```ts title="misc.ts"
 /**
  * Adds query context to the arguments.
  * @param args - The arguments to add query context to.
@@ -125,12 +125,12 @@ That is, until user context is fully supported.
  * @returns The arguments with query context added.
  */
 export function withQueryContext<T>(
-	args: T,
-	{ userId, modelId }: { userId: string; modelId: string | null },
+  args: T,
+  { userId, modelId }: { userId: string; modelId: string | null }
 ) {
-	;(args as any).userId = userId
-	;(args as any).modelId = modelId
-	return args
+  ;(args as any).userId = userId
+  ;(args as any).modelId = modelId
+  return args
 }
 ```
 
@@ -138,28 +138,28 @@ Now we can wrap any Prisa query with the `withQueryContext` function to add the 
 
 ```ts title="film-editor.server.ts"
 export async function action({ request }: ActionFunctionArgs) {
-	const userId = await requireUserId(request)
-	const formData = await request.formData()
+  const userId = await requireUserId(request)
+  const formData = await request.formData()
 
-	const { id: filmId, title } = submission.value
+  const { id: filmId, title } = submission.value
 
-	const updatedFilm = await prisma.film.upsert(
-		withQueryContext(
-			{
-				select: { id: true },
-				where: { id: filmId ?? '__new_film__' },
-				create: {
-					title,
-				},
-				update: {
-					title,
-				},
-			},
-			{ userId, modelId: filmId ?? null },
-		),
-	)
+  const updatedFilm = await prisma.film.upsert(
+    withQueryContext(
+      {
+        select: { id: true },
+        where: { id: filmId ?? '__new_film__' },
+        create: {
+          title
+        },
+        update: {
+          title
+        }
+      },
+      { userId, modelId: filmId ?? null }
+    )
+  )
 
-	return json({ updatedFilm });
+  return json({ updatedFilm })
 }
 ```
 
@@ -167,22 +167,22 @@ This will cause an error with Prisma, so in middleware we need to remove the `us
 used it.
 
 ```ts title="audit.extension.ts" {9, 13}
-export const auditLog = Prisma.defineExtension(client => {
-	return client.$extends({
-		query: {
-			async $allOperations(props) {
-				const { userId, modelId, ...args } = props.args as any
-				const { operation, model } = props
+export const auditLog = Prisma.defineExtension((client) => {
+  return client.$extends({
+    query: {
+      async $allOperations(props) {
+        const { userId, modelId, ...args } = props.args as any
+        const { operation, model } = props
 
-				// Exclude operations that can't be audited
-				if (props.operation.includes('$')) return await props.query({ ...args })
+        // Exclude operations that can't be audited
+        if (props.operation.includes('$')) return await props.query({ ...args })
 
-				// Do what you want with userId and modelId...
+        // Do what you want with userId and modelId...
 
-				return query({ ...args })
-			},
-		},
-	})
+        return query({ ...args })
+      }
+    }
+  })
 })
 ```
 
@@ -195,23 +195,21 @@ Now that we have the dynamic context sorted, we can move on to audit logs. I've 
 code in the last codeblock. But here, I will go through each section in detail.
 
 ```ts title="audit.extension.ts"
-const modelsToInclude: Prisma.ModelName[] = [
-	Prisma.ModelName.Film,
-]
+const modelsToInclude: Prisma.ModelName[] = [Prisma.ModelName.Film]
 
 const uniqueOperations: Prisma.PrismaAction[] = [
-	'create',
-	'update',
-	'delete',
-	'upsert',
+  'create',
+  'update',
+  'delete',
+  'upsert'
 ]
 const manyOperations: Prisma.PrismaAction[] = [
-	'createMany',
-	'updateMany',
-	'deleteMany',
+  'createMany',
+  'updateMany',
+  'deleteMany'
 ]
 const operationsToAudit: Prisma.PrismaAction[] =
-	uniqueOperations.concat(manyOperations)
+  uniqueOperations.concat(manyOperations)
 const fieldsToIgnore: string[] = ['updatedAt']
 ```
 
@@ -222,29 +220,27 @@ as this will always change in these operations (except for delete). This extends
 I haven't implemented audit logs for these yet, so I will just go through the unique operations.
 
 ```ts title="audit.extension.ts"
-export const auditLog = Prisma.defineExtension(client => {
-	return client.$extends({
-		query: {
-			async $allOperations(props) {
+export const auditLog = Prisma.defineExtension((client) => {
+  return client.$extends({
+    query: {
+      async $allOperations(props) {
+        // previous code...
 
-			  // previous code...
+        const shouldAudit =
+          operationsToAudit.includes(operation) &&
+          model &&
+          modelsToInclude.includes(model)
 
-				const shouldAudit =
-					operationsToAudit.includes(operation) &&
-					model &&
-					modelsToInclude.includes(model)
+        if (!shouldAudit) {
+          return await props.query({ ...args })
+        }
 
-				if (!shouldAudit) {
-					return await props.query({ ...args })
-				}
+        if (!userId) return await props.query({ ...args })
 
-				if (!userId) return await props.query({ ...args })
-
-				// further code ...
-
-			},
-		},
-	})
+        // further code ...
+      }
+    }
+  })
 })
 ```
 
@@ -257,23 +253,23 @@ state of the data and then later execure the original query to get the changes.
 
 ```ts
 const getOldValue = async (client: any, params: any) => {
-	const { model, operation, args } = params
+  const { model, operation, args } = params
 
-	if (model) {
-		if (uniqueOperations.includes(operation)) {
-			const result = await client[model].findUnique({ where: args.where })
-			return result === null ? {} : result
-		} else if (manyOperations.includes(operation)) {
-			const result = await client[model].findMany({ where: args.where })
-			return result === null ? {} : result
-		} else {
-			console.warn('Unhandeled operation: ', operation)
-			return {}
-		}
-	}
+  if (model) {
+    if (uniqueOperations.includes(operation)) {
+      const result = await client[model].findUnique({ where: args.where })
+      return result === null ? {} : result
+    } else if (manyOperations.includes(operation)) {
+      const result = await client[model].findMany({ where: args.where })
+      return result === null ? {} : result
+    } else {
+      console.warn('Unhandeled operation: ', operation)
+      return {}
+    }
+  }
 
-	console.warn("Model doesn't exist")
-	return {}
+  console.warn("Model doesn't exist")
+  return {}
 }
 ```
 
@@ -291,8 +287,7 @@ Also, there is a known issue where the PrismaClient type is wrong when being use
 let oldValues = {}
 let newValues = {}
 
-const before =
-	operation === 'create' ? {} : await getOldValue(client, props)
+const before = operation === 'create' ? {} : await getOldValue(client, props)
 
 // Remove select from args, so we can compare the before and after
 const removeSelectFromArgs = { ...args }
@@ -305,15 +300,14 @@ const after = result
 // If the old and new values are the same, then we don't need to create an audit log (e.g. no changes were made)
 if (equal(before, after, fieldsToIgnore)) return result
 
-const isDeleteOperation =
-	operation === 'delete' || operation === 'deleteMany'
+const isDeleteOperation = operation === 'delete' || operation === 'deleteMany'
 
 oldValues = isDeleteOperation
-	? before
-	: difference(before, after, fieldsToIgnore).oldValues
+  ? before
+  : difference(before, after, fieldsToIgnore).oldValues
 newValues = isDeleteOperation
-	? {}
-	: difference(before, after, fieldsToIgnore).newValues
+  ? {}
+  : difference(before, after, fieldsToIgnore).newValues
 
 // further code ...
 ```
@@ -324,8 +318,7 @@ The `getOldValue` function will either query the current model or just return an
 From here, we need to remove any "select" parameters that may have been added as this will
 prevent us from comparing the data. Then we call the actual query which should return the
 result of the operation. I created an `equal` helper function to compare the objects as if
-they are equal there is no need to create an audit log [(reference)](https://github.com/zxffo/petal/blob/6d2b1941fa2991a9516ee663f2e4259ab9e12120/app/utils/misc.tsx#L666
-).
+they are equal there is no need to create an audit log [(reference)](https://github.com/zxffo/petal/blob/6d2b1941fa2991a9516ee663f2e4259ab9e12120/app/utils/misc.tsx#L666).
 
 We now need to check if it is a delete operation, as if it is we don't need to do the difference
 checks.
@@ -334,26 +327,26 @@ checks.
 // previous code ...
 
 try {
-	await client.$transaction(async $prisma => {
-		await $prisma.filmEdit.create({
-			data: {
-				model: model || 'Unknown',
-				operation,
-				userId,
-				// @ts-expect-error id and filmId are not always defined
-				filmId: modelId ?? newValues?.id ?? newValues?.filmId,
-				oldValues: JSON.stringify(oldValues),
-				newValues: JSON.stringify(newValues),
-			},
-		})
-		await $prisma.user.update({
-			where: { id: userId },
-			data: { totalEdits: { increment: 1 } },
-		})
-	})
+  await client.$transaction(async ($prisma) => {
+    await $prisma.filmEdit.create({
+      data: {
+        model: model || 'Unknown',
+        operation,
+        userId,
+        // @ts-expect-error id and filmId are not always defined
+        filmId: modelId ?? newValues?.id ?? newValues?.filmId,
+        oldValues: JSON.stringify(oldValues),
+        newValues: JSON.stringify(newValues)
+      }
+    })
+    await $prisma.user.update({
+      where: { id: userId },
+      data: { totalEdits: { increment: 1 } }
+    })
+  })
 } catch (e) {
-	// Don't throw error if audit fails, only log it
-	console.error('Failed to create Audit', e)
+  // Don't throw error if audit fails, only log it
+  console.error('Failed to create Audit', e)
 }
 
 return result

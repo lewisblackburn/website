@@ -59,8 +59,9 @@ export const generateMetadata = async (
       authors: SITE_URL,
       images: [
         {
-          url: `${SITE_URL}/api/og?title=${title}&date=${date.split('T')[0]
-            }&url=lewisblackburn.me/blog`,
+          url: `${SITE_URL}/api/og?title=${title}&date=${
+            date.split('T')[0]
+          }&url=lewisblackburn.me/blog`,
           width: 1200,
           height: 630,
           alt: title,
@@ -74,8 +75,9 @@ export const generateMetadata = async (
       description: summary,
       images: [
         {
-          url: `${SITE_URL}/api/og?title=${title}&date=${date.split('T')[0]
-            }&url=lewisblackburn.me/blog`,
+          url: `${SITE_URL}/api/og?title=${title}&date=${
+            date.split('T')[0]
+          }&url=lewisblackburn.me/blog`,
           width: 1200,
           height: 630,
           alt: title
@@ -109,8 +111,9 @@ const BlogPostPage = (props: BlogPostPageProps) => {
     description: summary,
     datePublished: date,
     dateModified: modifiedTime,
-    image: `${SITE_URL}/api/og?title=${title}&date=${date.split('T')[0]
-      }&url=lewisblackburn.me/blog`,
+    image: `${SITE_URL}/api/og?title=${title}&date=${
+      date.split('T')[0]
+    }&url=lewisblackburn.me/blog`,
     author: {
       '@type': 'Person',
       name: SITE_NAME,

@@ -105,20 +105,20 @@ const Card = (props: CardProps) => {
       href={`/projects/${slug}`}
       className='group relative rounded-xl p-2 shadow-feature-card dark:shadow-feature-card-dark'
     >
+      <div className='absolute inset-0 rounded-lg bg-gradient-to-b from-transparent to-black group-hover:from-transparent group-hover:to-black' />
+      <h3 className='absolute bottom-24 left-7 font-title text-2xl font-bold text-white group-hover:text-zinc-100 dark:group-hover:text-muted-foreground'>
+        {name}
+      </h3>
+      <p className='absolute bottom-6 left-7 text-zinc-100 dark:text-muted-foreground'>
+        {description}
+      </p>
       <BlurImage
         width={1280}
         height={832}
         src={`/images/projects/${slug}/cover.png`}
         alt={description}
         className='rounded-lg'
-        imageClassName='group-hover:scale-105'
       />
-      <div className='absolute bottom-6 left-7 flex flex-col'>
-        <h3 className='font-title text-2xl font-bold text-white'>{name}</h3>
-        <p className='mt-2 text-zinc-100 dark:text-muted-foreground'>
-          {description}
-        </p>
-      </div>
     </Link>
   )
 }

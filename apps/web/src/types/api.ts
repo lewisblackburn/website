@@ -1,15 +1,15 @@
 export type Song =
   | {
-    isPlaying: true
-    name: string
-    artist: string
-    album: string
-    albumImage: string
-    songUrl: string
-  }
+      isPlaying: true
+      name: string
+      artist: string
+      album: string
+      albumImage: string
+      songUrl: string
+    }
   | {
-    isPlaying: false
-  }
+      isPlaying: false
+    }
 
 export type YouTube = {
   subscribers: number

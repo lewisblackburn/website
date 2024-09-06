@@ -6,7 +6,6 @@ import { motion, useInView } from 'framer-motion'
 import * as React from 'react'
 
 import Gallery from '../mdx/gallery'
-import Connect from './connect'
 import LocationCard from './location-card'
 
 const variants = {

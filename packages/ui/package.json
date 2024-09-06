@@ -54,11 +54,11 @@
     "react-dom": ">=18"
   },
   "devDependencies": {
+    "@types/react": "^18.2.58",
     "@zxffo/eslint-config": "workspace:*",
     "@zxffo/tailwind-config": "workspace:*",
     "@zxffo/tsconfig": "workspace:*",
     "@zxffo/utils": "workspace:*",
-    "@types/react": "^18.2.58",
     "eslint": "^8.57.0",
     "next": "14.1.1-canary.44",
     "react": "^18.2.0",

@@ -1,10 +1,9 @@
 ---
 name: use-count
 description: Real-time count API hook for interactive web applications
-github: https://github.com/zxffo/use-count
+github: https://github.com/lewisblackburn/use-count
 techstack:
   - label: Typescript
-selected: true
 ---
 
 # Features
@@ -27,11 +26,11 @@ selected: true
 ## Usage
 
 ```tsx
-import { useCount } from 'use-count';
+import { useCount } from 'use-count'
 
 const App = () => {
-  const { value: hits } = useCount('namespace', 'key');
+  const { value: hits } = useCount('namespace', 'key')
 
-  return <p>{hits}</p>;
-};
+  return <p>{hits}</p>
+}
 ```

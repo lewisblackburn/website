@@ -7,7 +7,7 @@ import { fetcher } from '@/lib/fetcher'
 import { type LastFMAlbum } from '@/types'
 
 function Album({ artist, image, name, url }: LastFMAlbum) {
-  const _image = image[1]['#text']
+  const _image = image && image[1] && image[1]['#text'] ? image[1]['#text'] : ''
 
   return (
     <li>

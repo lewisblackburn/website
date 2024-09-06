@@ -23,7 +23,7 @@ const LocationCard = () => {
   }))
 
   React.useEffect(() => {
-    let phi = 4.7
+    const phi = 4.7
     let width = 0
 
     const onResize = () => {

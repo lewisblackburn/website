@@ -31,9 +31,9 @@
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
+    "@types/node": "^20.11.20",
     "@zxffo/eslint-config": "workspace:^",
     "@zxffo/tsconfig": "workspace:^",
-    "@types/node": "^20.11.20",
     "eslint": "^8.57.0"
   },
   "publishConfig": {
