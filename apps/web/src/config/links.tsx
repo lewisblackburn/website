@@ -9,7 +9,6 @@ import {
 } from '@icons-pack/react-simple-icons'
 import {
   BarChartIcon,
-  BookIcon,
   FlameIcon,
   MonitorIcon,
   PencilIcon,
@@ -55,11 +54,6 @@ export const HEADER_LINKS: HeaderLinks = [
     icon: <MonitorIcon className='size-3.5' />,
     href: '/uses',
     text: 'Uses'
-  },
-  {
-    icon: <BookIcon className='size-3.5' />,
-    href: 'https://notes.lewisblackburn.me',
-    text: 'Notes'
   },
   {
     icon: <Text className='size-3.5' />,

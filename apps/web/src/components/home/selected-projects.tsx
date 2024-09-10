@@ -97,21 +97,14 @@ const SelectedProjects = (props: ProjectsProps) => {
 
 const Card = (props: CardProps) => {
   const { project } = props
-  const { slug, name, description } = project
+  const { slug, description } = project
 
   return (
     <Link
       key={slug}
       href={`/projects/${slug}`}
-      className='group relative rounded-xl p-2 shadow-feature-card dark:shadow-feature-card-dark'
+      className='group relative rounded-xl p-2 shadow-feature-card grayscale transition-all duration-300 hover:grayscale-0 dark:shadow-feature-card-dark'
     >
-      <div className='absolute inset-0 rounded-lg bg-gradient-to-b from-transparent to-black group-hover:from-transparent group-hover:to-black' />
-      <h3 className='absolute bottom-24 left-7 font-title text-2xl font-bold text-white group-hover:text-zinc-100 dark:group-hover:text-muted-foreground'>
-        {name}
-      </h3>
-      <p className='absolute bottom-6 left-7 text-zinc-100 dark:text-muted-foreground'>
-        {description}
-      </p>
       <BlurImage
         width={1280}
         height={832}

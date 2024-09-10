@@ -90,7 +90,7 @@ const ProjectPage = (props: ProjectPageProps) => {
   const { metadata, content } = project
 
   return (
-    <div className='mx-auto max-w-3xl'>
+    <div className='mx-auto max-w-5xl'>
       <Header metadata={metadata} />
       <BlurImage
         src={`/images/projects/${slug}/cover.png`}
