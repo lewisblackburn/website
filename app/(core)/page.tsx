@@ -5,7 +5,8 @@ import { Hero } from '@/components/home/hero'
 import { Projects } from '@/components/home/projects'
 import { Services } from '@/components/home/services'
 import { Skills } from '@/components/home/skills'
-import { Testimonials } from '@/components/home/testimonials'
+
+// import { Testimonials } from '@/components/home/testimonials'
 
 export default function HomePage() {
   return (
