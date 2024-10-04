@@ -1,36 +1,59 @@
-# lewisblackburn.me
+<p align="center">
+  <img alt="" src="https://lewisblackburn.me/images/og/og.png">
+</p>
 
-## Development Setup
+<h1 align="center">
+  lewisblackburn.me
+</h1>
 
-### Prerequisites
+## 🔨 Requirements
 
-- [Node.js](https://nodejs.org) v16
-- Package Manager (this project is using [pnpm](https://pnpm.io))
+- Node, recommended `20.x`
+- pnpm, recommended `8.14.0`
 
-### Setting Up a Project
+## 👋 Getting Started
 
-1. [Clone](https://help.github.com/en/articles/cloning-a-repository) this repository:
+Follow these steps to run the project locally on your machine:
 
-   ```bash
-   $ git clone https://github.com/lewisblackburn/lewisblackburn.me.git
-   ```
+```bash
+git clone https://github.com/lewisblackburn/lewisblackburn.me.git
+cd lewisblackburn.me
+pnpm install
+```
 
-2. Install dependencies:
+Create a `.env.local` file based on the provided `.env.example` file and fill in the necessary variables.
 
-   ```bash
-   $ pnpm install
-   ```
+OR you can skip this by modifying `apps/web/src/env.ts`:
 
-3. Create a [`.env.local`](https://nextjs.org/docs/basic-features/environment-variables) file similar to [`.env.example`](.env.example).
+```ts
+export const env = createEnv({
+  skipValidation: true,
 
-4. Start the development server:
+  server: {
+    // ...
+  },
+})
+```
 
-   ```bash
-   $ pnpm dev
-   ```
+You may notice that some functionalities will not work properly. But it's okay for learning.
 
-5. Open development site: [`http://localhost:3000`](http://localhost:3000).
+To run the app in development mode:
 
-## Deployment
+```bash
+pnpm dev
+```
 
-This project is deployed on [Vercel](https://vercel.com).
+The app will be available at `localhost:3000`.
+
+## ✍🏻 Author
+
+[@lewisblackburn](https://github.com/lewisblackburn)
+
+## 🪪 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+<hr>
+<p align="center">
+Made with ❤️  in Leeds (UK)
+</p>

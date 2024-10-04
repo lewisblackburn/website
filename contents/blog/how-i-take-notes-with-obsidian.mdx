@@ -1,0 +1,215 @@
+---
+title: 'How I take notes with Obsidian'
+createdAt: '2023-12-18T00:00:00Z'
+modifiedAt: '2023-12-18T00:00:00Z'
+summary: 'A guide on how I take notes with Obsidian.'
+image: '/images/blog/how-i-take-notes-with-obsidian.png'
+authorId: lewis
+tags: ['note-taking']
+---
+
+For the past few years, I have been tyring to find the perfect personal
+knowledge management (PKM) system. I have tried many different apps,
+including Evernote, Notion, Roam Research, and many more. However, I have
+never been able to find one that I am happy with. I still haven't. There
+isn't a system that not only works for me, but looks good and is
+customisable. That being said, sacrificing looks for functionality is
+something I am willing to do. I decided to settle on Obsidian. The good
+thing about Obsidian is that it allows you to customise it almost
+endlessly. There's probably a plugin for anything you want to do. If there
+isn't, make one yourself. That's the beauty of Obsidian. It's a blank
+canvas that you can make your own. While there are pre-built themes and extensions, the downside is that
+you have to do a lot of the work yourself.
+
+I had used Notion for at least a year, and at first, I loved it. It was a great
+way to organise my notes and tasks. The databases feature, which I still miss,
+was a great way to orgnaise my notes. However, my way of thinking didn't
+align with how Notion worked. I found myself spending more time organising
+my notes than actually writing them and by the end it just felt really cluttered.
+
+Now, in Obsidian, I just create a new note and start writing. I have a few
+templates that I use, a daily note system, and some plugins that I use to
+make my life easier. But, other than that, I just write.
+
+So, how do I take notes with Obsidian? Let's find out.
+
+## What is Obsidian
+
+Obsidian is a free, closed-source, markdown-based note-taking app. Its main draw is that it allows you
+to create a network of notes, which you can then link together and view in a graph. Instead of meticulously
+crafting the perfect note, you instead just write separate notes and they are linked together through
+`[[wikilinks]]` and tags. There are many systems that you can apply to Obsidian. But, I like to use the
+Evergreen Notes system - more on this later.
+
+## Customisation
+
+### Plugins
+
+I have many plugins, even one that I have created myself. However, here I will only talk
+about the crucial ones that I can't live without. If you want to see all of my plugins, then check
+them out on my notes site [(reference)](https://notes.lewisblackburn.me/public/Obsidian/Obsidian).
+
+#### Advancted Tables
+
+This is used to create markdown tables on the fly with `/table`. If you've dealt with
+markdown tables before, you'll know how much of a pain they are to create and maintain. This
+plugins makes life a lot easier with features such as: alignment options, table formatting and allows
+you to easily add and remove rows and columns. To use the `/` commands, you must have
+the setting turn on in Obsidian.
+
+#### dataview
+
+This isn't an essential plugin, but I do use it in my daily notes to curate all of
+the past tasks that I haven't yet completed.
+
+#### Kanban
+
+I talk about the importance of Kanban boards later on. It creates a kanban board that
+can be viewed both as a board and a regular obsidian note.
+
+#### Periodic Notes
+
+This is a crucial plugin for a daily notes system that integrates nicely with
+the templater plugin. Later, I show you how I use this to create daily notes for
+journaling and tracking habits.
+
+#### Remotely Save
+
+A huge downside of Obsidian is that you have to pay for cloud storage and syncing. It's quite
+in-expensive, but if you consider paying for it for a lifetime it quickly adds up as an extra
+expense that you don't need. With the `remotely-save` plugin, you can save your notes to a WebDAV if you
+have a NAS or to Google Drive, One Drive, and many more. This is a great way to sync your notes across
+multiple devices.
+
+#### Templater
+
+### Templates
+
+Obsidian does support templates by default, however, the templater plugin provides a lot more
+features. For example, you can run JavaScript, at one point I was categorising notes by folder
+and automatically filtered them into the correct folder by the filename e.g. if the file had a year at the end "About Time (2013)" then
+It would put that file into the films folder. Now I realised that it is easier to just tag notes to sort them rather than using folders.
+
+The most essential template that I have is the daily notes template which looks like this:
+
+```mdx
+properties:
+
+- university work
+- swedish
+- and so on ...
+
+'''dataview
+TASK
+FROM #daily AND -"#recycle"
+WHERE !completed AND !contains(meta(section).subpath, "Habits")
+SORT completed
+'''
+
+## <% tp.date.now("HH:mm:ss") %>
+```
+
+**NOTE**: I have used three speach marks (`'''`) instead of backticks here so it could all go in one codeblock.
+
+I have <kbd>CMD</kbd> + <kbd>D</kbd> bound to create a new periodic note with the default template
+as the daily note template. This creates a file with the date as the name and puts it into the `daily` folder
+e.g. `January 20th, March.mdx`. I use the American date format here as I think it looks nicer, I will be
+accepting hate mail. This allows me to check of daily habits and write down thoughts as I go
+through the day. I pair this with Espanso to quickly create timestamped headings by typing `;now` [(reference)](https://notes.lewisblackburn.me/public/Tools/Espanso).
+
+## Types of Notes
+
+There a many types of notes that you can take. I like to keep mine simple. I have a few different types.
+These are: daily notes, source notes, evergreen notes, canvas notes, map notes, and kanban notes.
+
+### Source Notes
+
+When I want to learn a new programming language, I create a source ntoe. This is where I can just
+throw up all the information on to a page. I then use this to create my evergreen notes.
+
+### Evergreen Notes
+
+<Image
+  alt='Evergreen Example'
+  src='/images/blog/how-i-take-notes-with-obsidian/evergreen-example.png'
+  width={640}
+  height={360}
+/>
+
+I split my evergreen notes into three sections. The first is the summary. This is where I write as brief
+as possible what the concept is. The second is a place for any other notes or ideas related to the
+conept. In this case, I related the idea bad to `callbacks` in React. The third is where I put
+any references or resources that I may need. The point of an evergreen note is that you are forever
+building on top of them. They are a living document that are never finished. You tag them with
+`#evergreen` and then link to them from other notes. This is a great way to build up a knowledge base.
+Then, when you want to revise a concept, you just look for the tag related to it and you can see all
+the notes you need. I then tend to make flashcards from these notes.
+
+### Daily Notes
+
+I like to keep track of waht I do each day. I use the `daily notes` plugin to create a new note for
+each day. I also have a daily notes template that tracks daily habits and pulls in incomplete tasks
+from the previous days. I used to journal at the end of each day, bt I found that I never really
+did it. So, instead, I jsut write something down when it happens. I use [Espanso](https://espanso.org/) to quickly create
+timestamp headings on the fly.
+
+### Canvas Notes
+
+This is a type of note that I rarely use, however, it stills comes in useful from time to time.
+I use canvas notes for when I want to brainstorm ideas. I use the default canvas page to create a
+canvas note. This is a great way to visualise ideas and concepts.
+
+<Image
+  alt='Canvas Example'
+  src='/images/blog/how-i-take-notes-with-obsidian/swedish-canvas.png'
+  width={640}
+  height={360}
+/>
+
+Here is canvas note that I made when I was initially learning Swedish. It was nice to keep in the
+background if I ever needed to quickly look up a common mistake or Swedish character pronunciation.
+
+### Kanban Notes
+
+This one is probably pretty self-explanatory. You've probably come across a kanban board before. It was
+highly popularised by Trello. I use them to keep track of tasks related to projects. I use the
+`kanban` plugin to create a kanban board.
+
+### Map Notes
+
+This is where I keep my dewey decimal system. I have a map note for each category and then a map note
+for each sub-category. This is a great way to orgnaise your notes, this is what I use for my
+University notes.
+
+<Image
+  alt='Map Example'
+  src='/images/blog/how-i-take-notes-with-obsidian/dewey-decimal-system.jpg'
+  width={640}
+  height={360}
+/>
+
+<Image
+  alt='Sub-Map Example'
+  src='/images/blog/how-i-take-notes-with-obsidian/sub-category.jpg'
+  width={640}
+  height={360}
+/>
+
+The map emoji is a great way to make your map notes stand out. As you can see, I also have a backlink
+to the main category note. This is a great way to navigate your notes. A benifit of this, over having
+folders, is that the notes can be in multiple categories. For example, a note on the history of
+computing could be in the history category and the computing category.
+
+## Backup and Syncing
+
+Everything in Obsidian is stored in a folder on your computer. This has many benefits over cloud-based
+note-taking apps. But, it also comes with some downsides. A benifit is that you own your data. This brings
+a sense of security and privacy that I like. I can write anything I want and know that it is safe. A downside
+of this is backing up your data and syncing it across devices. At first, I strictly wrote notes on my
+computer. But, I soon realised that I needed to be able to write notes on my phone too. Instead of paying
+for Obsidian Sync, I decided to setup a WebDAV server on my Synology NAS. This was surprisingly easy to
+do and means I can sync my notes across all devices. This is done through the `remotely-save` plugin.
+You can find out more about how to do this [here](https://google.com). A nice thing, is that you can also
+save plugins and themes across your devices through using this method. However, I found this broke a few
+plugins and wasn't really reliable enough. Oh, and you can also save to Google Drive, One Drive, and many
+more with this plugin too.

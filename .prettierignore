@@ -1,4 +1,4 @@
-# Misc
-.changeset/*.md
-pnpm-lock.yaml
-pnpm-workspace.yaml
+dist
+node_modules
+.next
+build

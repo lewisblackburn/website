@@ -1,2 +1,0 @@
-pnpm check
-pnpm --filter=blog generate-posts

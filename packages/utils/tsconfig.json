@@ -1,6 +1,0 @@
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "exclude": ["node_modules"],
-  "extends": "@zxffo/tsconfig/base.json",
-  "include": ["**/*.ts"]
-}

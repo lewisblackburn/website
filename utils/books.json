@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "title": "Industrial Society and Its Future",
+      "author": "Theodore Kaczynski",
+      "cover": "/images/books/industrial_society_and_its_future.jpg"
+    },
+    {
+      "title": "Time Traveler's Wife",
+      "author": "Audrey Niffenegger",
+      "cover": "/images/books/time_travelers_wife.jpg"
+    },
+    {
+      "title": "Humble Pi: When Math Goes Wrong in the Real World",
+      "author": "Matt Parker",
+      "cover": "/images/books/where_math_goes_wrong_in_the_real_world.jpg"
+    },
+    {
+      "title": "Education of a Wandering Man",
+      "author": "Louis L'Amour",
+      "cover": "/images/books/education_of_a_wandering_man.jpg"
+    },
+    {
+      "title": "How to Win Friends and Influence People",
+      "author": "Dale Carnegie",
+      "cover": "/images/books/how_to_win_friends_and_influence_people.jpg"
+    }
+  ]
+}

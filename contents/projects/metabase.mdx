@@ -1,0 +1,331 @@
+---
+name: Metabase
+description: Metabase is a comprehensive database that brings together information about films, TV shows, books, people, and songs, all in one convenient platform. Just like popular services like TMDB or IMDb, Metabase provides a place for users to navigate, create and update their favourite media.
+url: https://fly.metabase.dev
+icon: /images/projects/metabase/icon.webp
+image: /images/projects/metabase/thumb.png
+github: https://github.com/lewisblackburn/metabase
+featured: true
+collab: false
+---
+
+## 1. Overview
+
+Metabase is a comprehensive database that brings together metadata for films, TV shows, books, people, songs, and more.
+It combines features from platforms like TMDB, IMDb, and Goodreads to offer users a unified space to explore, create, and
+update their favorite media. What sets Metabase apart, however, is its focus on **cross-media relationships**, such as linking
+films to their soundtracks or connecting people to their related works. Additionally, the platform offers **personalized recommendations**
+and **community-driven reviews**, enhancing the overall user experience.
+
+## 2. The Vision
+
+Creating Metabase stemmed from my frequent need to identify which film a song I was listening to was from, as well as the inconvenience
+of using multiple platforms to track and log my media. Unlike many existing services, Metabase aims to offer:
+
+- A cross-media database in which users can explore multiple types of media in one place.
+- Seamless, personalised recommendations that are based on a user's full range of interests (books, films, music).
+- A collaborative community-driven space where users contribute to building the media database and be able to track their additions.
+
+<Image
+  alt='The initial inspiration for the film page'
+  src='/images/projects/metabase/early-wireframe-inspiration.png'
+  width={700}
+  height={641}
+/>
+
+## 3. The Tech Stack
+
+Building Metabase required making some key decisions about the tech stack. We selected tools
+that would be both scalable and flexible enough to handle large volumes of media data while
+minimising reliance on third-party services.
+
+### Backend
+
+- Fly app deployment with Docker
+- Multi-region, distributed, production-ready SQLite Database with LiteFS
+- Healthcheck endpoint for Fly backups region fallbacks
+- GitHub Actions with testing and deploy on merge for both production and staging environments
+- Email/Password Authentication with cookie-based sessions
+- Transaction email with Resend and forgot password/password reset support
+- Database ORM with Prisma
+- Role-based User Permissions
+- Custom built image hosting + AWS S3
+- Caching via cachified: Both in-memory and SQLite-based (with better-sqlite3)
+- Local third-party request mocking with MSW
+- Unit testing with Vitest and Testing Library with pre-configured Test Database
+- Code formatting with Prettier
+- Linting with ESLint
+- Static Types with TypeScript
+- Runtime schema validation with zod
+
+### Frontend
+
+- Remix as the Web Framework of choice
+- Progressively Enhanced and fully type safe forms with Conform
+- Styling with Tailwind
+- An excellent, customizable component library with Radix UI
+- End-to-end testing with Playwright
+
+<Image
+  alt='Architecture of the tech stack'
+  src='/images/projects/metabase/architecture-diagram.png'
+  width={1920}
+  height={1080}
+/>
+
+## 4. Design Process
+
+### User Interface (UI)
+
+It was imperative that our user interface was **intuitive** and \*\*aesthetically pleasing\*\*. Drawing inspiration
+from current popular platforms such as IMDb and TMDB, on the go we built a clean, modern interface, but
+aimed to make it more user-centered, with features like an easy-to-navigate media library and custom
+dashboards.
+
+#### Key UI Considerations:
+
+- Diverse but simple **accessible navigation** for both power and casual users.
+- **Personalized recommendations** front and center, tailored to each user’s media consumption habits.
+- **Clear and concise information** about media entries without overwhelming the user.
+
+### UX Research
+
+Before finalising the design, we conducted in-person **user surveys** and **interviews** with potential users to understand
+their pain points with existing platforms and what possible features they might like.
+
+Some of the insights we gathered:
+
+- Users wanted an easier way to navigate between different types of media.
+- Personalisation of the dashboard was a common need amongst users.
+- Mobile functionality was a necessary requirement.
+
+## 5. Development Challenges
+
+Developing a comprehensive platform like Metabase turned out to be a lot more troublesome than first
+anticipated. It required solving some **technological and design challenges** along the way:
+
+### Recommendation System
+
+One of the biggest challenges was integrating personalised recommendations across different media types.
+There were many ways to implement a recommendation system which lead to analysis paralysis of which would
+be most suitable.
+
+**Solution**: Initially, we implemented a **collaborative filtering** algorithm and incorporated **content-based
+filtering** to offer hybrid recommendations. However, this was not enough. The recommender would be able
+to recommend similar films based on title's and geners which is great for reocmmending films in a
+series e.g. Transformers. But, it couldn't provide recommendations personalised to each user. In the future,
+to improve this, we are going to implement an external server to run a reinforcement learning (AI) recommendation system.
+
+```ts title="recommendations.server.ts"
+export async function generateFilmRecommendations(updatedOrCreatedFilmFromDate: Date) {
+  const existingFilms = await prisma.film.findMany({
+    select: {
+      id: true,
+      runtime: true,
+      title: true,
+      overview: true,
+      tagline: true,
+      genres: {
+        select: {
+          name: true,
+        },
+      },
+      keywords: {
+        select: {
+          name: true,
+        },
+      },
+      cast: {
+        select: {
+          person: {
+            select: {
+              name: true,
+            },
+          },
+          character: true,
+        },
+      },
+      createdAt: true,
+      updatedAt: true,
+    },
+  })
+
+  // NOTE: Finds updated films within the last {time period} provided.
+  const updatedOrNewFilms = existingFilms.filter((film) => {
+    return film.createdAt >= updatedOrCreatedFilmFromDate || film.updatedAt >= updatedOrCreatedFilmFromDate
+  })
+
+  for (const updatedOrNewFilm of updatedOrNewFilms) {
+    const recommendedFilms = existingFilms
+      .map((existingFilm) => ({
+        ...existingFilm,
+        similarity: calculateFilmSimilarity(updatedOrNewFilm, existingFilm),
+      }))
+      .filter((film) => film.id !== updatedOrNewFilm.id) // Exclude the input film
+      .sort((a, b) => b.similarity - a.similarity) // Sort in descending order
+      .slice(0, 5) // Only keep the top 5 most similar films
+
+    // NOTE: This operation is ignored in middleware, so it won't
+    // trigger an infinite loop as the updatedAt field is not updated.
+    // If it was updated, it would trigger the recommendations again.
+    // This is the same for the next await prisma.film.update too.
+    await prisma.film.update({
+      where: { id: updatedOrNewFilm.id },
+      data: {
+        recommendations: {
+          // Delete previous recommended films
+          deleteMany: {},
+          create: recommendedFilms.map((film) => ({
+            film: {
+              connect: {
+                id: film.id,
+              },
+            },
+            similarity: film.similarity,
+          })),
+        },
+      },
+    })
+    console.log('Updated recommendations for film', updatedOrNewFilm.id)
+
+    for (const recommendedFilm of recommendedFilms) {
+      const recommendedRecommendedFilms = existingFilms
+        .map((existingFilm) => ({
+          ...existingFilm,
+          similarity: calculateFilmSimilarity(recommendedFilm, existingFilm),
+        }))
+        .filter((film) => film.id !== recommendedFilm.id) // Exclude the input film
+        .sort((a, b) => b.similarity - a.similarity) // Sort in descending order
+        .slice(0, 5) // Only keep the top 5 most similar films
+
+      console.log('Updated recommendations for film', recommendedFilm.id)
+
+      await prisma.film.update({
+        where: { id: recommendedFilm.id },
+        data: {
+          recommendations: {
+            // Delete previous recommended films
+            deleteMany: {},
+            create: recommendedRecommendedFilms.map((film) => ({
+              film: {
+                connect: {
+                  id: film.id,
+                },
+              },
+              similarity: film.similarity,
+            })),
+          },
+        },
+      })
+    }
+  }
+}
+```
+
+1. **Retrieve existing films**:
+
+   - Fetch all films from the database along with selected fields like title, genres, cast, and timestamps.
+
+2. **Filter for updated/new films**:
+
+   - Filter the films that were either created or updated after the provided `updatedOrCreatedFilmFromDate`.
+
+3. **For each updated or new film**:
+
+   - Loop over the filtered films.
+
+4. **Calculate similarity for the current film**:
+
+   - For each updated/new film, compute its similarity with every other film in the database using `calculateFilmSimilarity`.
+
+5. **Exclude the current film**:
+
+   - Remove the current film from its own recommendations and sort other films by similarity.
+
+6. **Select the top 5 similar films**:
+
+   - Select the top 5 films with the highest similarity scores.
+
+7. **Update the film's recommendations**:
+
+   - Clear the existing recommendations for the current film and store the new top 5 recommendations along with their similarity scores in the database.
+
+8. **For each recommended film**:
+
+   - Loop over the top 5 recommended films of the current film.
+
+9. **Recompute recommendations for each recommended film**:
+
+   - For each recommended film, recompute the similarity between it and all other films (excluding itself).
+
+10. **Update the recommended film's recommendations**:
+
+- Similar to step 7, clear and update the recommended films' top 5 recommendations based on the recalculated similarities.
+
+This recursive process ensures both the updated films and their recommended films are updated in tandem.
+
+### Audit Logs
+
+Finding a way to implement a simple audit log system which could be used as middleware in transactions
+to store changes made to models.
+
+**Solution**: Please read the in-depth article I wrote about this [**here**](/blog/prisma-dynamic-context-and-audit-logs).
+
+### Importing Media
+
+In order to have a smooth transition from other platforms, I wanted to be able to import media from them.
+
+**Solution**: Using object-oriented programming create an API wrapper for each platform and build UI components
+e.g. import tables to import the media.
+
+<Image alt='Dynamic Import Table' src='/images/projects/metabase/import-table.png' width={1920} height={1080} />
+
+### User-Generated Content Moderation
+
+To maintain quality and trust, moderating reviews and ratings was critical.
+
+**Solution**: We built an admin dashboard with moderation tools to filter out spammy or inappropriate content.
+
+## 6. Key Features
+
+Metabase stands out for its wide range of features, designed to engage users while simplifying their media exploration journey.
+
+### 1. Search and Recommendations
+
+Metabase's search algorithm delivers fast and accurate results. Users can filter by media type, genre, rating, and so much more, making it easier to find exactly what they’re looking for.
+
+### 2. User Reviews and Ratings
+
+Metabase fosters a community-driven space where users contribute their opinions. A rich review system allows users to leave detailed ratings, and community-driven algorithms push the most helpful reviews to the top.
+
+### 3. Cross-Media Connections
+
+One of Metabase’s unique features is its ability to connect different types of media (e.g., linking a film to its soundtrack or a book it’s based on).
+
+### 4. Watchlists and Favorites
+
+Users can easily organise their media through custom watchlists and favorite lists, which are stored and synced across devices.
+
+## 7. Performance Optimisation
+
+Optimising the performance of a media-heavy platform like Metabase required special attention to ensure fast load times and smooth user experience.
+
+### Caching Mechanisms
+
+To improve response times, we implemented both server-side caching and client-side caching for commonly used data, especially the media catalog and user profiles.
+
+## 8. Future Roadmap
+
+Metabase is constantly evolving. Some of the features and improvements we plan to implement include:
+
+- **Social Sharing**: Allow users to share their watchlists and reviews on social media platforms.
+- **Enhanced Personalization**: More granular controls for users to fine-tune their recommendations.
+- **Mobile App**: Develop a native mobile app to make accessing Metabase on-the-go easier.
+
+## 9. Lessons Learned
+
+Building Metabase taught us several valuable lessons:
+
+- **Scalability is key**: Early decisions on the tech stack can save a lot of pain later.
+- **User feedback is invaluable**: Iterating based on real user input ensured we were building features people actually wanted.
+- **Data can be tricky**: Aggregating data from multiple sources is a double-edged sword — it adds depth but also complexity.
