@@ -4,6 +4,7 @@ import localFont from 'next/font/local'
 
 import '../styles/globals.css'
 
+import Head from 'next/head'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from 'sonner'
 
@@ -69,6 +70,9 @@ export default function RootLayout({
   return (
     // NOTE: Force darkMode for now
     <html lang='en-GB' className='dark'>
+      <Head>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+      </Head>
       <body className={cn(inter.className, biotif.className)}>
         <SpeedInsights />
         <GTM />
