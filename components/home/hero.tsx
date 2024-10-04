@@ -68,13 +68,14 @@ export function Hero() {
             </Button>
           </div>
 
+          {/* Image and grid layout */}
           <div className='mt-12 flex flex-col gap-10 md:grid md:grid-cols-4 md:grid-rows-1'>
-            <div className='relative col-span-2 aspect-video max-w-full md:aspect-auto'>
+            <div className='relative col-span-2 aspect-video w-full'>
               <Image
                 src={GridWideImage}
                 alt=''
                 placeholder='blur'
-                className='h-56 max-w-full rounded-lg object-cover drop-shadow-2xl'
+                className='h-56 w-full rounded-lg object-cover drop-shadow-2xl'
               />
             </div>
             <div className='relative hidden aspect-square md:block'>
@@ -90,14 +91,15 @@ export function Hero() {
             </div>
           </div>
 
-          <div className='mx-auto mt-12'>
+          {/* Announcement text that always stays below the image */}
+          <div className='mx-auto mt-12 md:mt-8'>
             <div className='rounded-md border bg-muted p-4 text-sm md:p-2'>
               <Link
                 href={UtmUrl('/projects/metabase', {
                   medium: UtmMediums.Homepage,
                   content: 'hero',
                 })}>
-                Metabase has just reached it's alpha stage 🎉
+                Metabase has just reached its alpha stage 🎉
                 <span className='ml-1 underline underline-offset-2'> Read the announcement</span>
               </Link>
             </div>
