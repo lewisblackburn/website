@@ -69,12 +69,12 @@ export function Hero() {
           </div>
 
           <div className='mt-12 flex flex-col gap-10 md:grid md:grid-cols-4 md:grid-rows-1'>
-            <div className='relative col-span-2 aspect-video md:aspect-auto'>
+            <div className='relative col-span-2 aspect-video max-w-full md:aspect-auto'>
               <Image
                 src={GridWideImage}
                 alt=''
                 placeholder='blur'
-                className='h-56 rounded-lg object-cover drop-shadow-2xl'
+                className='h-56 max-w-full rounded-lg object-cover drop-shadow-2xl'
               />
             </div>
             <div className='relative hidden aspect-square md:block'>
