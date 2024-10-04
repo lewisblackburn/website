@@ -67,7 +67,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en-GB'>
+    // NOTE: Force darkMode for now
+    <html lang='en-GB' className='dark'>
       <body className={cn(inter.className, biotif.className)}>
         <SpeedInsights />
         <GTM />
