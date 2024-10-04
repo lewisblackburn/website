@@ -17,7 +17,6 @@ const sitemap = async () => {
     Routes.Contact,
     Routes.Projects,
     Routes.Services,
-    Routes.LearningProducts,
 
     ...blogPages,
     ...cmsPages,
