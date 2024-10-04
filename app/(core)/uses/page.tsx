@@ -1,4 +1,4 @@
-import { Metadata, ResolvingMetadata } from 'next'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { allPages } from '@/.contentlayer/generated'
 import { absoluteUrl } from '@/utils/urls'
@@ -19,7 +19,7 @@ export function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata(parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(parent: any): Promise<Metadata> {
   const previousOpenGraph = (await parent)?.openGraph ?? {}
   const previousTwitter = (await parent)?.twitter ?? {}
 

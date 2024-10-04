@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from 'next'
+import type { Metadata } from 'next'
 import { absoluteUrl } from '@/utils/urls'
 
 import { Routes } from '@/config/routes'
@@ -14,7 +14,7 @@ type Props = {
   searchParams: Record<string, never>
 }
 
-export async function generateMetadata(_: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(_: Props, parent: any): Promise<Metadata> {
   const previousOpenGraph = (await parent)?.openGraph ?? {}
   const previousTwitter = (await parent)?.twitter ?? {}
 

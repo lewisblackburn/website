@@ -1,4 +1,4 @@
-import { Metadata, ResolvingMetadata } from 'next'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { absoluteUrl } from '@/utils/urls'
 import { type Article, type WithContext } from 'schema-dts'
@@ -25,7 +25,7 @@ export function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: Props, parent: any): Promise<Metadata> {
   const previousOpenGraph = (await parent)?.openGraph ?? {}
   const previousTwitter = (await parent)?.twitter ?? {}
 
