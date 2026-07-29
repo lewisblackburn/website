@@ -54,7 +54,9 @@ export default function TopTracks() {
         ApiResponseSuccess<GetTopTracksResponse>
     >('/api/spotify/top-tracks', fetcher)
 
-    console.log(topTracks)
+    if (!topTracks?.data?.length) {
+        return null
+    }
 
     return (
         <section className="bg-background relative py-12">
