@@ -72,7 +72,7 @@ export default function Footer() {
                 </div>
                 <div className="text-muted-foreground mt-8 flex flex-col justify-between gap-4 border-t py-8 text-xs font-medium md:flex-row md:items-center md:text-left">
                     <p className="order-2 lg:order-1">
-                        &copy; {new Date().getFullYear()} Your Company. All
+                        &copy; {new Date().getFullYear()} Lewis Blackburn. All
                         rights reserved.
                     </p>
                     <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">
